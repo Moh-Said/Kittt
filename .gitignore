@@ -1,0 +1,7 @@
+build/
+.build/
+.jj/
+.git/
+.build-number
+
+.DS_Store
