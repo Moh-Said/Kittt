@@ -9,7 +9,7 @@ struct RootView: View {
     @State private var savedMinSize: NSSize?
     @State private var savedMaxSize: NSSize?
 
-    private static let miniContentSize = NSSize(width: 320, height: 220)
+    private static let miniContentSize = NSSize(width: 320, height: 290)
 
     var body: some View {
         ZStack {

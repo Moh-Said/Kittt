@@ -6,6 +6,7 @@ final class AudioEngine {
     private var endObserver: NSObjectProtocol?
     private var storedVolume: Float = 0.8
 
+    var levelTap: AudioLevelTap?
     var onFinish: (() -> Void)?
 
     var currentTime: TimeInterval {
@@ -35,6 +36,7 @@ final class AudioEngine {
             endObserver = nil
         }
         let item = AVPlayerItem(url: url)
+        levelTap?.attach(to: item)
         player.replaceCurrentItem(with: item)
         player.volume = storedVolume
         endObserver = NotificationCenter.default.addObserver(
@@ -54,6 +56,7 @@ final class AudioEngine {
     func stop() {
         player.pause()
         player.replaceCurrentItem(with: nil)
+        levelTap?.detach()
         if let obs = endObserver {
             NotificationCenter.default.removeObserver(obs)
             endObserver = nil

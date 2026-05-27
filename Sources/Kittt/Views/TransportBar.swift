@@ -49,9 +49,15 @@ struct TransportBar: View {
             .fixedSize()
 
             HStack(spacing: 6) {
-                Image(systemName: "speaker.fill")
-                    .foregroundStyle(.secondary)
-                    .font(.caption)
+                Button { player.toggleMute() } label: {
+                    Image(systemName: (player.volume == 0 || player.isMuted) ? "speaker.slash.fill" : "speaker.fill")
+                        .foregroundStyle(.secondary)
+                        .font(.caption)
+                        .frame(width: 14, height: 14)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .help(player.isMuted ? "Unmute" : "Mute")
                 Slider(
                     value: Binding(
                         get: { Double(player.volume) },

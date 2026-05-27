@@ -27,11 +27,14 @@ struct NowPlayingPanel: View {
 
             Spacer(minLength: 0)
 
-            Text("NOW PLAYING")
-                .font(.caption2.weight(.bold))
-                .tracking(2)
-                .foregroundStyle(.secondary)
-                .padding(.top, 2)
+            VStack(alignment: .trailing, spacing: 4) {
+                Text("NOW PLAYING")
+                    .font(.caption2.weight(.bold))
+                    .tracking(2)
+                    .foregroundStyle(.secondary)
+                WaveformVisualization()
+            }
+            .padding(.top, 2)
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)

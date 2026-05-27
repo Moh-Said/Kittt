@@ -3,5 +3,6 @@ build/
 .jj/
 .git/
 .build-number
+.vscode/
 
 .DS_Store

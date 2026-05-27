@@ -5,6 +5,8 @@ struct MiniPlayerView: View {
     @State private var hovering = false
 
     var body: some View {
+        @Bindable var player = player
+
         ZStack(alignment: .topTrailing) {
             background
 
@@ -25,7 +27,34 @@ struct MiniPlayerView: View {
                     .font(.headline)
                     .lineLimit(1)
 
-                Spacer(minLength: 4)
+                WaveformVisualization(size: CGSize(width: 140, height: 22), barCount: 12)
+                    .padding(.vertical, 4)
+
+                Spacer(minLength: 0)
+
+                HStack(spacing: 8) {
+                    Button { player.toggleMute() } label: {
+                        Image(systemName: (player.volume == 0 || player.isMuted) ? "speaker.slash.fill" : "speaker.fill")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(width: 14, height: 14)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .help(player.isMuted ? "Unmute" : "Mute")
+
+                    Slider(value: $player.volume, in: 0...1)
+                        .controlSize(.mini)
+                        .frame(width: 180)
+
+                    // an invisible balancer on the trailing side
+                    Color.clear
+                        .frame(width: 14, height: 14)
+                }
+                .padding(.bottom, 4)
+                .opacity(hovering ? 1 : 0)
+                .scaleEffect(hovering ? 1 : 0.85)
+                .animation(.easeInOut(duration: 0.15), value: hovering)
 
                 HStack(spacing: 28) {
                     Button { player.previous() } label: {
@@ -68,7 +97,7 @@ struct MiniPlayerView: View {
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
-            .frame(width: 320, height: 220)
+            .frame(width: 320, height: 290)
             .animation(.easeInOut(duration: 0.2), value: player.currentTrack?.id)
 
             Button {
@@ -87,13 +116,15 @@ struct MiniPlayerView: View {
                     .contentShape(Circle())
             }
             .buttonStyle(.plain)
-            .padding(8)
+            .padding(.top, 18)
+            .padding(.trailing, 12)
             .opacity(hovering ? 1 : 0)
             .scaleEffect(hovering ? 1 : 0.85)
             .animation(.easeInOut(duration: 0.15), value: hovering)
             .help("Expand")
+
         }
-        .frame(width: 320, height: 220)
+        .frame(width: 320, height: 290)
         .onHover { hovering = $0 }
     }
 
@@ -128,7 +159,7 @@ struct MiniPlayerView: View {
             Image(nsImage: img)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 320, height: 220)
+                .frame(width: 320, height: 320)
                 .blur(radius: 40)
                 .opacity(0.32)
                 .clipped()

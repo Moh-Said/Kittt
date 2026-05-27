@@ -18,14 +18,23 @@ final class PlayerModel {
     var isPlaying = false
     var currentTime: TimeInterval = 0
     var duration: TimeInterval = 0
-    var volume: Float = 0.8 {
-        didSet { engine.volume = volume }
+    var volume: Float = (UserDefaults.standard.object(forKey: PlayerModel.volumeKey) as? Float) ?? 0.8 {
+        didSet {
+            if preMuteVolume != nil, volume > 0 { preMuteVolume = nil }
+            engine.volume = volume
+            UserDefaults.standard.set(volume, forKey: Self.volumeKey)
+        }
     }
 
     var miniPlayerMode: Bool = false
 
-    let durationCache = DurationCache()
+    var isMuted: Bool { preMuteVolume != nil }
 
+    let durationCache = DurationCache()
+    let audioLevel = AudioLevelTap()
+
+    @ObservationIgnored private static let volumeKey = "kittt.volume"
+    @ObservationIgnored private var preMuteVolume: Float?
     @ObservationIgnored private let engine = AudioEngine()
     @ObservationIgnored private var tickTimer: Timer?
     @ObservationIgnored private var metadataTaskID = UUID()
@@ -54,8 +63,20 @@ final class PlayerModel {
 
     init() {
         engine.volume = volume
+        engine.levelTap = audioLevel
         engine.onFinish = { [weak self] in
             self?.next()
+        }
+    }
+
+    func toggleMute() {
+        if let saved = preMuteVolume {
+            preMuteVolume = nil
+            volume = saved
+        } else {
+            let toRestore: Float = volume > 0 ? volume : 0.5
+            preMuteVolume = toRestore
+            volume = 0
         }
     }
 
